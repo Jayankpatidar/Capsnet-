@@ -1,0 +1,412 @@
+/* ==============================
+   MODERN LOGIN PAGE - GLASSMORPHISM UI
+   ============================== */
+
+.login-page {
+  min-height: 100vh;
+  display: flex;
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(-45deg, var(--primary), var(--accent), var(--primary-dark), var(--accent-dark));
+  background-size: 400% 400%;
+  animation: gradient-shift 8s ease infinite;
+}
+
+/* Background Image Blur Layer */
+.bg-image {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: -10;
+  opacity: 0.1;
+  filter: blur(1px);
+}
+
+/* ==============================
+   LEFT SIDE
+   ============================== */
+.left-side {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 3rem;
+  color: white;
+  text-align: center;
+  position: relative;
+}
+
+.left-side::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--glass-bg);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-right: 1px solid var(--glass-border);
+  z-index: -1;
+}
+
+.logo-section {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 2rem;
+}
+
+.logo {
+  width: 3rem;
+  height: 3rem;
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.2));
+}
+
+.title {
+  font-size: 2rem;
+  font-weight: 800;
+  color: white;
+  text-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  font-family: "Poppins", sans-serif;
+}
+
+.content {
+  max-width: 24rem;
+}
+
+.rating {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1.25rem;
+  margin-bottom: 1.5rem;
+  background: var(--glass-bg);
+  backdrop-filter: blur(10px);
+  padding: 1rem;
+  border-radius: 1rem;
+  border: 1px solid var(--glass-border);
+}
+
+.group-users {
+  height: 3rem;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+}
+
+.stars {
+  display: flex;
+  gap: 0.25rem;
+}
+
+.star {
+  height: 1.25rem;
+  width: 1.25rem;
+  fill: #fbbf24;
+  color: #fbbf24;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.2));
+  animation: glow 2s ease-in-out infinite alternate;
+}
+
+.rating-text {
+  font-size: 1rem;
+  color: #f1f5f9;
+  font-weight: 500;
+}
+
+.main-heading {
+  font-size: 2.25rem;
+  font-weight: 800;
+  margin: 1.5rem 0 0.75rem;
+  line-height: 1.2;
+  font-family: "Poppins", sans-serif;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.sub-heading {
+  font-size: 1.1rem;
+  color: #e2e8f0;
+  font-weight: 400;
+  line-height: 1.5;
+}
+
+/* ==============================
+   RIGHT SIDE
+   ============================== */
+.right-side {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2.5rem;
+}
+
+.form-container {
+  width: 100%;
+  max-width: 28rem;
+  background: var(--glass-bg);
+  backdrop-filter: blur(25px);
+  -webkit-backdrop-filter: blur(25px);
+  border-radius: 1.5rem;
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--shadow);
+  padding: 2.5rem;
+  animation: morph 8s ease-in-out infinite;
+  position: relative;
+  overflow: hidden;
+}
+
+.form-container::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(45deg, transparent, rgba(255,255,255,0.05), transparent);
+  animation: shimmer 3s infinite;
+  pointer-events: none;
+}
+
+.form-title {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 2rem;
+  text-align: center;
+  font-family: "Poppins", sans-serif;
+  position: relative;
+  z-index: 1;
+}
+
+.error-message {
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.2);
+  color: var(--error);
+  padding: 1rem;
+  border-radius: 0.75rem;
+  margin-bottom: 1.5rem;
+  font-size: 0.95rem;
+  text-align: center;
+  backdrop-filter: blur(10px);
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.label {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 0.5rem;
+  font-family: "Inter", sans-serif;
+}
+
+.input {
+  padding: 1rem;
+  border: 1px solid var(--glass-border);
+  border-radius: 0.75rem;
+  outline: none;
+  font-size: 1rem;
+  background: var(--glass-bg);
+  backdrop-filter: blur(10px);
+  color: var(--text-primary);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  font-family: "Inter", sans-serif;
+}
+
+.input:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
+  background: rgba(255, 255, 255, 0.9);
+  transform: translateY(-1px);
+}
+
+/* Password Icon Button */
+.password-group {
+  position: relative;
+}
+
+.eye-button {
+  position: absolute;
+  right: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  background: var(--glass-bg);
+  backdrop-filter: blur(10px);
+  border: 1px solid var(--glass-border);
+  border-radius: 0.5rem;
+  padding: 0.5rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.eye-button:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: translateY(-50%) scale(1.05);
+}
+
+.eye-icon {
+  width: 1.25rem;
+  height: 1.25rem;
+  color: var(--text-secondary);
+  transition: color 0.2s ease;
+}
+
+.eye-button:hover .eye-icon {
+  color: var(--primary);
+}
+
+/* Buttons */
+.submit-button {
+  width: 100%;
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+  color: white;
+  padding: 1rem;
+  border-radius: 0.75rem;
+  border: none;
+  outline: none;
+  font-size: 1.05rem;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  font-family: "Inter", sans-serif;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
+}
+
+.submit-button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+  transition: left 0.5s;
+}
+
+.submit-button:hover::before {
+  left: 100%;
+}
+
+.submit-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(99, 102, 241, 0.4);
+}
+
+.submit-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: 0 4px 15px rgba(99, 102, 241, 0.2);
+}
+
+/* Switch Links */
+.switch-link {
+  margin-top: 2rem;
+  text-align: center;
+}
+
+.switch-button {
+  color: var(--primary);
+  background: none;
+  border: none;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-weight: 500;
+  font-family: "Inter", sans-serif;
+}
+
+.switch-button:hover {
+  color: var(--primary-dark);
+  text-decoration: underline;
+}
+
+/* ==============================
+   RESPONSIVE DESIGN
+   ============================== */
+@media (max-width: 1024px) {
+  .login-page {
+    flex-direction: column;
+  }
+
+  .left-side {
+    padding: 2.5rem 1.5rem;
+    flex: none;
+    min-height: 40vh;
+  }
+
+  .left-side::before {
+    border-right: none;
+    border-bottom: 1px solid var(--glass-border);
+  }
+
+  .right-side {
+    padding: 2rem 1rem;
+  }
+
+  .form-container {
+    margin-top: 2rem;
+    max-width: 32rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .form-container {
+    padding: 2rem 1.5rem;
+    margin: 1rem;
+  }
+
+  .main-heading {
+    font-size: 1.75rem;
+  }
+
+  .left-side {
+    padding: 2rem 1rem;
+  }
+
+  .rating {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .logo-section {
+    margin-bottom: 1.5rem;
+  }
+
+  .title {
+    font-size: 1.75rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .form-container {
+    padding: 1.5rem 1rem;
+  }
+
+  .main-heading {
+    font-size: 1.5rem;
+  }
+
+  .form-title {
+    font-size: 1.5rem;
+  }
+
+  .input {
+    padding: 0.875rem;
+  }
+
+  .submit-button {
+    padding: 0.875rem;
+  }
+}
