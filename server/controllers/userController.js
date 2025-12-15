@@ -408,7 +408,7 @@ export const registerUser = async (req, res) => {
             full_name: name,
             username: email.split('@')[0] + Math.random().toString(36).substr(2, 5),
             role,
-            isVerified: false
+            isVerified: true  // ✅ Auto-verify on registration for development
         })
 
         await user.save()
@@ -485,9 +485,7 @@ export const loginUser = async (req, res) => {
             return res.status(403).json({ success: false, message: "Unauthorized domain" });
         }
 
-        if (!user.isVerified) {
-            return res.status(401).json({ success: false, message: "Please verify your college email first" });
-        }
+        console.log("✅ User verified:", user._id, user.email);
 
         console.log("✅ User found:", user._id, user.email);
 

@@ -60,17 +60,30 @@ const Login = () => {
 
         if (response.data.success) {
           console.debug("[login] register response:", response.data);
-          const userData = {
-            id: response.data.user._id,
-            name: response.data.user.full_name,
-            email: response.data.user.email,
-            token: response.data.token,
-          };
-          localStorage.setItem("user", JSON.stringify(userData));
-          localStorage.setItem("token", response.data.token);
-          dispatch(setUserAction(userData));
-          toast.success("Account created");
-          navigate("/", { replace: true }); // no reload
+          
+          // Show verification message
+          toast.success("Account created! 📧 Check your email for verification link");
+          
+          // Reset form
+          setFormData({
+            name: "",
+            email: "",
+            password: "",
+            confirmPassword: "",
+          });
+          
+          // Switch to login mode
+          setIsSignUp(false);
+          
+          // Show instruction
+          setTimeout(() => {
+            toast.custom((t) => (
+              <div className="bg-blue-50 border-l-4 border-blue-500 p-4 rounded shadow-lg">
+                <p className="text-blue-900 font-semibold">📨 Verify Your Email</p>
+                <p className="text-blue-800 text-sm mt-1">Check your email for the verification link from capsnet</p>
+              </div>
+            ), { duration: 6000 });
+          }, 500);
         }
       } else {
         if (!isMedicapsEmail(formData.email)) {
@@ -99,7 +112,19 @@ const Login = () => {
         }
       }
     } catch (err) {
-      setError(err.response?.data?.message || "Something went wrong");
+      const errorMsg = err.response?.data?.message || "Something went wrong";
+      setError(errorMsg);
+      
+      // Special handling for email verification error
+      if (errorMsg.includes("verify")) {
+        toast.error("📧 Please verify your email first!");
+        toast.custom((t) => (
+          <div className="bg-yellow-50 border-l-4 border-yellow-500 p-4 rounded shadow-lg">
+            <p className="text-yellow-900 font-semibold">Email Not Verified</p>
+            <p className="text-yellow-800 text-sm mt-1">Check your email for the verification link and click it to activate your account</p>
+          </div>
+        ), { duration: 5000 });
+      }
     } finally {
       setLoading(false);
     }

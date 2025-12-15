@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Routes, Route, useLocation, Navigate } from "react-router-dom";
 
 import Login from "./pages/Login.jsx";
+import EmailVerification from "./pages/EmailVerification.jsx";
 import ChatBox from "./pages/ChatBox.jsx";
 import Connections from "./pages/Connections";
 import CreatePost from "./pages/CreatePost";
@@ -40,7 +41,7 @@ import { addMessages } from "./features/messages/messagesSlice.js";
 
 import { Moon, Sun } from "lucide-react";
 
-const BASE_URL = import.meta.env.VITE_API_URL || "http://127.0.0.1:5001";
+const BASE_URL = import.meta.env.L || "http://127.0.0.1:5001";
 
 const App = () => {
   const dispatch = useDispatch();
@@ -200,6 +201,12 @@ const App = () => {
         <Route
           path="/login"
           element={!user ? <Login setUser={(u) => dispatch(setUserAction(u))} /> : <Navigate to="/" replace />}
+        />
+
+        {/* Email verification route - public access */}
+        <Route
+          path="/verify-email"
+          element={<EmailVerification />}
         />
 
         {/* Protected app routes under wildcard; redirect to /login if not authenticated */}
