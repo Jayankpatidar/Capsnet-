@@ -105,14 +105,32 @@ app.use(express.json());
 app.use(cookieParser());
 
 // ✅ Smart CORS (accept all localhost ports for dev + mobile access)
-app.use(
-  cors({
-    origin: [/http:\/\/127\.0\.0\.1:\d+$/, /http:\/\/localhost:\d+$/, /http:\/\/10\.255\.66\.225:\d+$/],
-    credentials: true,
-    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization"],
-  })
-);
+// Production-ready CORS: allow Vercel frontend and local dev
+import cors from "cors";
+
+const allowedOrigins = [
+  "https://capsnet.vercel.app",
+  "http://localhost:5173",
+];
+
+app.use(cors({
+  origin: function (origin, callback) {
+    // allow requests with no origin (Postman, mobile apps, server-to-server)
+    if (!origin) return callback(null, true);
+
+    if (allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    }
+
+    return callback(new Error("Not allowed by CORS"));
+  },
+  credentials: true,
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization", "Accept"],
+}));
+
+// Ensure preflight is handled for all routes (important on some hosts like Render)
+app.options("*", cors());
 
 // ✅ Serve static files from uploads directory
 import path from "path";
@@ -153,12 +171,18 @@ app.get("/", (_req, res) => {
 // ✅ Create HTTP server and Socket.IO
 const PORT = process.env.PORT || 5001;
 const httpServer = createServer(app);
-const io = new Server(httpServer, {
-  cors: {
-    origin: [/http:\/\/127\.0\.0\.1:\d+$/, /http:\/\/localhost:\d+$/, /http:\/\/10\.255\.66\.225:\d+$/],
-    credentials: true,
-  }
-});
+// Configure Socket.IO CORS to match express CORS policy
+const FRONTEND_URL = process.env.FRONTEND_URL || process.env.FRONTEND_ORIGIN || null;
+const socketCors = {
+  credentials: true,
+};
+if (FRONTEND_URL) {
+  socketCors.origin = FRONTEND_URL;
+} else {
+  socketCors.origin = [/http:\/\/127\.0\.0\.1:\d+$/, /http:\/\/localhost:\d+$/, /http:\/\/10\.255\.66\.225:\d+$/];
+}
+
+const io = new Server(httpServer, { cors: socketCors });
 
 // ✅ Socket.IO Real-time Features
 io.on('connection', (socket) => {
