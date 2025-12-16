@@ -1,5 +1,5 @@
 import dotenv from "dotenv";
-dotenv.config();
+
 
 import express from "express";
 import helmet from "helmet";
@@ -29,6 +29,30 @@ import searchRoutes from "./routes/searchRoutes.js";
 
 import Message from "./model/Message.js";
 import User from "./model/User.js";
+const app = express();
+dotenv.config();
+
+app.use(cors({
+  origin: function (origin, callback) {
+    // allow requests with no origin (Postman, mobile apps, server-to-server)
+    if (!origin) return callback(null, true);
+
+    // Allow file:// protocol for local development (when opening HTML directly)
+    if (origin && origin.startsWith('file://')) return callback(null, true);
+
+    if (allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    }
+
+    return callback(new Error("Not allowed by CORS"));
+  },
+  credentials: true,
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization", "Accept"],
+}));
+
+// Ensure preflight is handled for all routes (important on some hosts like Render)
+app.options("*", cors());
 
 // DEV fallback for JWT_SECRET to avoid mismatched signing/verifying during local testing
 if (!process.env.JWT_SECRET && process.env.NODE_ENV !== "production") {
@@ -46,7 +70,7 @@ if (process.env.NODE_ENV !== "production") {
 // Add cookie parser
 import cookieParser from "cookie-parser";
 
-const app = express();
+
 
 // ✅ Connect MongoDB
 await connectDb();
@@ -114,27 +138,7 @@ const allowedOrigins = [
   "http://127.0.0.1:5001",
 ];
 
-app.use(cors({
-  origin: function (origin, callback) {
-    // allow requests with no origin (Postman, mobile apps, server-to-server)
-    if (!origin) return callback(null, true);
 
-    // Allow file:// protocol for local development (when opening HTML directly)
-    if (origin && origin.startsWith('file://')) return callback(null, true);
-
-    if (allowedOrigins.includes(origin)) {
-      return callback(null, true);
-    }
-
-    return callback(new Error("Not allowed by CORS"));
-  },
-  credentials: true,
-  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-  allowedHeaders: ["Content-Type", "Authorization", "Accept"],
-}));
-
-// Ensure preflight is handled for all routes (important on some hosts like Render)
-app.options("*", cors());
 
 // ✅ Serve static files from uploads directory
 import path from "path";
