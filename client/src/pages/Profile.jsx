@@ -8,7 +8,7 @@ import moment from 'moment';
 import api, { BASE_URL } from '../api/axios';
 import toast from 'react-hot-toast';
 import { useSelector } from 'react-redux';
-import { getProfileImageURL, getCoverImageURL } from '../utils/imageUtils';
+import { getProfileImageURL, getCoverImageURL, getImageURL } from '../utils/imageUtils';
 
 const Profile = () => {
   const { profileId } = useParams();
@@ -124,7 +124,7 @@ const Profile = () => {
                     post.image_urls.map((image, index) => (
                       <div key={index} className="relative group">
                         <img
-                          src={image}
+                          src={getImageURL(image)}
                           alt="Post media"
                           className="object-cover w-32 rounded-lg md:w-48 lg:w-64 aspect-video"
                         />

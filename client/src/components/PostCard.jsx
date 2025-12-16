@@ -602,9 +602,8 @@ const PostCard = ({ post }) => {
     if (!img) return DEFAULT_AVATAR;
     if (img.startsWith("http")) return img; // Already full URL (ImageKit)
     if (img.startsWith("/")) {
-      // Local server path - construct full URL
-      const baseURL = BASE_URL.replace("/api", "");
-      return baseURL + img;
+      // Local server path - use relative URL to go through Vite proxy
+      return img;
     }
     return img;
   };
@@ -613,9 +612,8 @@ const PostCard = ({ post }) => {
     if (!video) return null;
     if (video.startsWith("http")) return video; // Already full URL (ImageKit)
     if (video.startsWith("/")) {
-      // Local server path - construct full URL
-      const baseURL = BASE_URL.replace("/api", "");
-      return baseURL + video;
+      // Local server path - use relative URL to go through Vite proxy
+      return video;
     }
     return video;
   };

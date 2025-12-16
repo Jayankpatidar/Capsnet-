@@ -29,17 +29,17 @@ const getServerBaseURL = () => {
 export const getProfileImageURL = (imagePath) => {
   if (!imagePath) return DEFAULT_AVATAR;
   if (typeof imagePath !== 'string') return DEFAULT_AVATAR;
-  
+
   // ✅ If it's an absolute URL, return as-is
   if (imagePath.startsWith('http')) return imagePath;
-  
-  // ✅ If it's a relative path starting with /, prepend server base
+
+  // ✅ If it's a relative path starting with /, use relative URL to go through Vite proxy
   if (imagePath.startsWith('/')) {
-    return `${getServerBaseURL()}${imagePath}`;
+    return imagePath;
   }
-  
+
   // ✅ If it's a relative path without /, prepend /uploads/
-  return `${getServerBaseURL()}/${imagePath}`;
+  return `/${imagePath}`;
 };
 
 /**
@@ -50,17 +50,17 @@ export const getProfileImageURL = (imagePath) => {
 export const getCoverImageURL = (imagePath) => {
   if (!imagePath) return DEFAULT_AVATAR;
   if (typeof imagePath !== 'string') return DEFAULT_AVATAR;
-  
+
   // ✅ If it's an absolute URL, return as-is
   if (imagePath.startsWith('http')) return imagePath;
-  
-  // ✅ If it's a relative path starting with /, prepend server base
+
+  // ✅ If it's a relative path starting with /, use relative URL to go through Vite proxy
   if (imagePath.startsWith('/')) {
-    return `${getServerBaseURL()}${imagePath}`;
+    return imagePath;
   }
-  
+
   // ✅ If it's a relative path without /, prepend /uploads/
-  return `${getServerBaseURL()}/${imagePath}`;
+  return `/${imagePath}`;
 };
 
 /**
@@ -71,15 +71,15 @@ export const getCoverImageURL = (imagePath) => {
 export const getImageURL = (imagePath) => {
   if (!imagePath) return DEFAULT_AVATAR;
   if (typeof imagePath !== 'string') return DEFAULT_AVATAR;
-  
+
   // ✅ If it's an absolute URL, return as-is
   if (imagePath.startsWith('http')) return imagePath;
-  
-  // ✅ If it's a relative path starting with /, prepend server base
+
+  // ✅ If it's a relative path starting with /, use relative URL to go through Vite proxy
   if (imagePath.startsWith('/')) {
-    return `${getServerBaseURL()}${imagePath}`;
+    return imagePath;
   }
-  
+
   // ✅ If it's a relative path without /, prepend /uploads/
-  return `${getServerBaseURL()}/${imagePath}`;
+  return `/${imagePath}`;
 };

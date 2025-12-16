@@ -375,9 +375,12 @@ export const getUserProfile = async (req, res) => {
 
 export const registerUser = async (req, res) => {
     try {
+        console.log("🔐 Register attempt for email:", req.body.email);
+
         const { name, email, password } = req.body
 
         if (!name || !email || !password) {
+            console.log("❌ Register failed: Missing name, email, or password");
             return res.json({ success: false, message: "All fields are required" })
         }
 
@@ -400,6 +403,8 @@ export const registerUser = async (req, res) => {
             role = "faculty";
         }
 
+        console.log("🔍 Creating user object...");
+
         const user = new User({
             _id: new mongoose.Types.ObjectId().toString(),
             name,
@@ -411,7 +416,9 @@ export const registerUser = async (req, res) => {
             isVerified: true  // ✅ Auto-verify on registration for development
         })
 
+        console.log("🔍 Saving user...");
         await user.save()
+        console.log("✅ User saved successfully:", user._id);
 
         // Create email verification token
         const verifyToken = jwt.sign({ id: user._id, type: 'email_verify' }, process.env.JWT_SECRET || 'default_secret', { expiresIn: '7d' })
@@ -427,7 +434,46 @@ export const registerUser = async (req, res) => {
 
         const token = jwt.sign({ id: user._id, role: user.role }, process.env.JWT_SECRET || 'default_secret', { expiresIn: '7d' })
 
-        res.json({ success: true, user, token, message: "User registered successfully. Please verify your college email to activate the account." })
+        // -------------------------
+        //  Prepare safe user object (clean copy to avoid serialization issues)
+        // -------------------------
+        const safeUser = JSON.parse(JSON.stringify({
+            _id: user._id,
+            email: user.email,
+            full_name: user.full_name,
+            username: user.username,
+            profile_picture: user.profile_picture,
+            cover_photo: user.cover_photo,
+            bio: user.bio,
+            location: user.location,
+            skills: user.skills,
+            interests: user.interests,
+            department: user.department,
+            role: user.role,
+            isVerified: user.isVerified,
+            account_type: user.account_type,
+            is_private: user.is_private,
+            followers: user.followers,
+            following: user.following,
+            connections: user.connections,
+            profileViews: user.profileViews,
+            postViews: user.postViews,
+            profile_strength: user.profile_strength,
+            language: user.language,
+            createdAt: user.createdAt,
+            updatedAt: user.updatedAt
+        }));
+
+        console.log("🔍 About to send register response...");
+
+        try {
+            const response = { success: true, user: safeUser, token, message: "User registered successfully. Please verify your college email to activate the account." };
+            console.log("🔍 Register response object created successfully");
+            return res.json(response);
+        } catch (responseError) {
+            console.error("❌ Error creating register response:", responseError.message);
+            return res.status(500).json({ success: false, message: "Response serialization error" });
+        }
 
     } catch (error) {
         console.log(error)
@@ -464,70 +510,65 @@ export const verifyEmail = async (req, res) => {
 }
 
 export const loginUser = async (req, res) => {
-    try {
-        console.log("🔐 Login attempt for email:", req.body.email);
+  try {
+    console.log("LOGIN API HIT", req.body);
 
-        const { email, password } = req.body;
+    const { email, password } = req.body;
 
-        if (!email || !password) {
-            console.log("❌ Login failed: Missing email or password");
-            return res.status(400).json({ success: false, message: "All fields are required" });
-        }
-
-        const user = await User.findOne({ email });
-        if (!user) {
-            console.log("❌ Login failed: User not found for email:", email);
-            return res.status(404).json({ success: false, message: "User not found" });
-        }
-
-        // Enforce Medicaps domain on login as well
-        if (!user.email.toLowerCase().endsWith("@medicaps.ac.in")) {
-            return res.status(403).json({ success: false, message: "Unauthorized domain" });
-        }
-
-        console.log("✅ User verified:", user._id, user.email);
-
-        console.log("✅ User found:", user._id, user.email);
-
-        const isMatch = await bcrypt.compare(password, user.password);
-        if (!isMatch) {
-            console.log("❌ Login failed: Invalid password for user:", user._id);
-            return res.status(401).json({ success: false, message: "Invalid credentials" });
-        }
-
-        console.log("✅ Password matched for user:", user._id);
-
-        const token = jwt.sign(
-            { id: user._id, role: user.role },
-            process.env.JWT_SECRET || 'default_secret',
-            { expiresIn: "7d" }
-        );
-
-        console.log("✅ JWT token generated for user:", user._id);
-
-        // -------------------------
-        //  SET JWT IN HTTP-ONLY COOKIE
-        // -------------------------
-        res.cookie("auth_token", token, {
-            httpOnly: true,
-            secure: false, // true in production
-            sameSite: "lax",
-            maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
-        });
-
-        console.log("✅ Login successful for user:", user._id);
-
-        return res.json({
-            success: true,
-            user,
-            token,
-            message: "Login successful"
-        });
-
-    } catch (error) {
-        console.error("❌ Login error:", error.message, error.stack);
-        return res.status(500).json({ success: false, message: error.message });
+    // 🔒 Validate input
+    if (!email || !password) {
+      return res.status(400).json({
+        success: false,
+        message: "Email and password are required"
+      });
     }
+
+    // 🔍 Find user
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(401).json({
+        success: false,
+        message: "Invalid email or password"
+      });
+    }
+
+    // 🔑 Compare password
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
+      return res.status(401).json({
+        success: false,
+        message: "Invalid email or password"
+      });
+    }
+
+    // 🔐 Generate token
+    const token = jwt.sign(
+      { id: user._id },
+      process.env.JWT_SECRET,
+      { expiresIn: "7d" }
+    );
+
+    // ✅ Success
+    return res.status(200).json({
+      success: true,
+      message: "Login successful",
+      token,
+      user: {
+        _id: user._id,
+        full_name: user.full_name,
+        email: user.email,
+        username: user.username,
+        role: user.role
+      }
+    });
+
+  } catch (error) {
+    console.error("LOGIN ERROR:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Server error during login"
+    });
+  }
 };
 
 export const getSuggestedUsers = async (req, res) => {

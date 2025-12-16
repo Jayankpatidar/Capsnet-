@@ -58,7 +58,7 @@ import axios from "axios";
 
 // ✅ Vite-safe version (uses import.meta.env)
 // Use relative URL to leverage Vite proxy
-const baseURL = `${import.meta.env.VITE_API_URL || "/api"}`;
+const baseURL = `${import.meta.env.VITE_API_URL || "http://127.0.0.1:5001/api"}`;
 
 
 // ✅ Axios instance with credentials
@@ -93,7 +93,12 @@ api.interceptors.request.use(
       token = localStorage.getItem("token");
     }
 
-    if (token) {
+    // 🚫 LOGIN & REGISTER pe token mat bhejo
+    if (
+      token &&
+      !config.url.includes("/user/login") &&
+      !config.url.includes("/user/register")
+    ) {
       config.headers.Authorization = `Bearer ${token}`;
       // debug: confirm token attached
       console.debug("[api] attaching token:", token?.slice ? token.slice(0, 10) + "..." : token);

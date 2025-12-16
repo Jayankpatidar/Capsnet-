@@ -104,19 +104,23 @@ app.use(express.json());
 // register cookie parser so auth can read cookies
 app.use(cookieParser());
 
-// ✅ Smart CORS (accept all localhost ports for dev + mobile access)
+// ✅ Smart CORS (accept all localhost ports for dev + mobile access + file protocol)
 // Production-ready CORS: allow Vercel frontend and local dev
-import cors from "cors";
 
 const allowedOrigins = [
   "https://capsnet.vercel.app",
   "http://localhost:5173",
+  "http://127.0.0.1:5173",
+  "http://127.0.0.1:5001",
 ];
 
 app.use(cors({
   origin: function (origin, callback) {
     // allow requests with no origin (Postman, mobile apps, server-to-server)
     if (!origin) return callback(null, true);
+
+    // Allow file:// protocol for local development (when opening HTML directly)
+    if (origin && origin.startsWith('file://')) return callback(null, true);
 
     if (allowedOrigins.includes(origin)) {
       return callback(null, true);
@@ -139,7 +143,8 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 app.use('/uploads', express.static(path.join(__dirname, 'uploads'), {
   setHeaders: (res, path) => {
-    res.set('Access-Control-Allow-Origin', '*');
+    res.set('Access-Control-Allow-Origin', 'http://127.0.0.1:5173');
+    res.set('Access-Control-Allow-Credentials', 'true');
   }
 }));
 

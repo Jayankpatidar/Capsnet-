@@ -10,8 +10,8 @@ const getMediaURL = (mediaUrl) => {
   if (typeof mediaUrl !== 'string') return '';
   if (mediaUrl.startsWith('http')) return mediaUrl;
   if (mediaUrl.startsWith('/')) {
-    const serverRoot = BASE_URL.replace('/api', '');
-    return `${serverRoot}${mediaUrl}`;
+    // Use relative URL to go through Vite proxy
+    return mediaUrl;
   }
   return mediaUrl;
 };

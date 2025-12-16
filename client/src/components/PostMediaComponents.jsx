@@ -18,9 +18,8 @@ const getImageURLHelper = (img) => {
   if (!img) return DEFAULT_AVATAR;
   if (img.startsWith("http")) return img; // Already full URL
   if (img.startsWith("/")) {
-    // Remove /api from BASE_URL to get base server URL
-    const baseURL = BASE_URL.replace("/api", "");
-    return baseURL + img;
+    // Use relative URL to go through Vite proxy
+    return img;
   }
   return img;
 };
